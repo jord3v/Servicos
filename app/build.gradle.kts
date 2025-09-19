@@ -2,9 +2,23 @@ plugins {
     id("com.android.application")
 }
 
+import java.util.Properties
+
+// Carrega as propriedades do arquivo gradle.properties
+val properties = Properties()
+try {
+    properties.load(project.rootProject.file("gradle.properties").inputStream())
+} catch (e: Exception) {
+    logger.warn("Failed to load gradle.properties", e)
+}
+
 android {
     namespace = "com.example.servicos"
     compileSdk = 34
+
+    buildFeatures {
+        buildConfig = true
+    }
 
     defaultConfig {
         applicationId = "com.example.servicos"
@@ -14,6 +28,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Expõe as variáveis para o BuildConfig
+        buildConfigField("String", "API_URL", properties.getProperty("API_URL"))
+        buildConfigField("String", "API_TOKEN", properties.getProperty("API_TOKEN"))
     }
 
     buildTypes {
